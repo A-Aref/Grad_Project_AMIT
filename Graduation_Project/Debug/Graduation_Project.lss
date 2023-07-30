@@ -19,15 +19,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
   7 .debug_abbrev 00000aac  00000000  00000000  00001f80  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   00000c92  00000000  00000000  00002a2c  2**0
+  8 .debug_line   00000b96  00000000  00000000  00002a2c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000334  00000000  00000000  000036c0  2**2
+  9 .debug_frame  00000334  00000000  00000000  000035c4  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    0000053c  00000000  00000000  000039f4  2**0
+ 10 .debug_str    00000552  00000000  00000000  000038f8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000816  00000000  00000000  00003f30  2**0
+ 11 .debug_loc    00000816  00000000  00000000  00003e4a  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 000000f8  00000000  00000000  00004746  2**0
+ 12 .debug_ranges 000000f8  00000000  00000000  00004660  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -528,19 +528,19 @@ int main(void)
  2f8:	84 bb       	out	0x14, r24	; 20
 	
 	//////////////////////////////////////////////////////////////////////////
-	ReqTemp=60;
+	ReqTemp = 60;				//The initial temperature is 60
  2fa:	8c e3       	ldi	r24, 0x3C	; 60
  2fc:	90 e0       	ldi	r25, 0x00	; 0
  2fe:	90 93 61 00 	sts	0x0061, r25	; 0x800061 <__DATA_REGION_ORIGIN__+0x1>
  302:	80 93 60 00 	sts	0x0060, r24	; 0x800060 <__DATA_REGION_ORIGIN__>
-	Mode=2; //HEATING OR COOLING
+	Mode = 2;					//HEATING OR COOLING
  306:	82 e0       	ldi	r24, 0x02	; 2
  308:	80 93 8a 00 	sts	0x008A, r24	; 0x80008a <Mode>
-	SettingMode=0; //IF 1 Setting Mode is active
+	SettingMode = 0;			//IF 1 Setting Mode is active
  30c:	10 92 89 00 	sts	0x0089, r1	; 0x800089 <SettingMode>
 	//////////////////////////////////////////////////////////////////////////
 	
-	Write_EEPROM(60,1,1); //Write Required temp to EEPROM (initially to 60) 
+	Write_EEPROM(60,1,1);	//Write Required temp to EEPROM (initially to 60) 
  310:	41 e0       	ldi	r20, 0x01	; 1
  312:	61 e0       	ldi	r22, 0x01	; 1
  314:	8c e3       	ldi	r24, 0x3C	; 60
@@ -746,7 +746,7 @@ void SS_Init()
 0000046c <SS_Deinit>:
 }
 
-void SS_Deinit()
+void SS_Deinit()							//To allow blinking and shutting down
 {
 	DDRA &= 0x0f;
  46c:	8a b3       	in	r24, 0x1a	; 26
@@ -932,7 +932,7 @@ ISR(TIMER0_OVF_vect)
  5a8:	10 92 82 00 	sts	0x0082, r1	; 0x800082 <counter+0x1>
  5ac:	10 92 81 00 	sts	0x0081, r1	; 0x800081 <counter>
 		
-		SumTemp -= MeasuredTemp[ArrCount];
+		SumTemp -= MeasuredTemp[ArrCount];							//Delete the most early temperature measured
  5b0:	c0 91 7b 00 	lds	r28, 0x007B	; 0x80007b <ArrCount>
  5b4:	d0 91 7c 00 	lds	r29, 0x007C	; 0x80007c <ArrCount+0x1>
  5b8:	cc 0f       	add	r28, r28
@@ -947,7 +947,7 @@ ISR(TIMER0_OVF_vect)
  5ce:	93 0b       	sbc	r25, r19
  5d0:	90 93 65 00 	sts	0x0065, r25	; 0x800065 <SumTemp+0x1>
  5d4:	80 93 64 00 	sts	0x0064, r24	; 0x800064 <SumTemp>
-		MeasuredTemp[ArrCount] = (500.0 * ADC_Read(0)) / 1024.0;
+		MeasuredTemp[ArrCount] = (500.0 * ADC_Read(0)) / 1024.0;	//Measure the new temperature
  5d8:	80 e0       	ldi	r24, 0x00	; 0
  5da:	90 e0       	ldi	r25, 0x00	; 0
  5dc:	0e 94 53 00 	call	0xa6	; 0xa6 <ADC_Read>
@@ -969,7 +969,7 @@ ISR(TIMER0_OVF_vect)
  604:	0e 94 cd 03 	call	0x79a	; 0x79a <__fixsfsi>
  608:	79 83       	std	Y+1, r23	; 0x01
  60a:	68 83       	st	Y, r22
-		SumTemp += MeasuredTemp[ArrCount];
+		SumTemp += MeasuredTemp[ArrCount];							//Adds the new temperature
  60c:	20 91 7b 00 	lds	r18, 0x007B	; 0x80007b <ArrCount>
  610:	30 91 7c 00 	lds	r19, 0x007C	; 0x80007c <ArrCount+0x1>
  614:	f9 01       	movw	r30, r18
@@ -985,7 +985,7 @@ ISR(TIMER0_OVF_vect)
  62c:	95 1f       	adc	r25, r21
  62e:	90 93 65 00 	sts	0x0065, r25	; 0x800065 <SumTemp+0x1>
  632:	80 93 64 00 	sts	0x0064, r24	; 0x800064 <SumTemp>
-		ActualTemp = SumTemp / 10;
+		ActualTemp = SumTemp / 10;									//Gets the average of all measured temperature
  636:	6a e0       	ldi	r22, 0x0A	; 10
  638:	70 e0       	ldi	r23, 0x00	; 0
  63a:	0e 94 fe 04 	call	0x9fc	; 0x9fc <__divmodhi4>
@@ -999,15 +999,15 @@ ISR(TIMER0_OVF_vect)
 		
 		//Counting 1 Second
 		
-		if (ArrCount >= 10)
+		if (ArrCount >= 10)											//If the timer counts 1 second
  652:	2a 30       	cpi	r18, 0x0A	; 10
  654:	31 05       	cpc	r19, r1
  656:	14 f1       	brlt	.+68     	; 0x69c <__vector_11+0x144>
 		{
-			ArrCount = 0;
+			ArrCount = 0;											//reset the arrayCount
  658:	10 92 7c 00 	sts	0x007C, r1	; 0x80007c <ArrCount+0x1>
  65c:	10 92 7b 00 	sts	0x007B, r1	; 0x80007b <ArrCount>
-			if (Mode==1)//Heating element on
+			if (Mode==1)											//Heating element on
  660:	80 91 8a 00 	lds	r24, 0x008A	; 0x80008a <Mode>
  664:	81 30       	cpi	r24, 0x01	; 1
  666:	61 f4       	brne	.+24     	; 0x680 <__vector_11+0x128>
@@ -1034,7 +1034,7 @@ ISR(TIMER0_OVF_vect)
  67c:	80 58       	subi	r24, 0x80	; 128
  67e:	85 bb       	out	0x15, r24	; 21
 			}
-			if (SettingMode)//Temp Setting mode
+			if (SettingMode)										//Temp Setting mode
  680:	80 91 89 00 	lds	r24, 0x0089	; 0x800089 <SettingMode>
  684:	88 23       	and	r24, r24
  686:	51 f0       	breq	.+20     	; 0x69c <__vector_11+0x144>

@@ -32,12 +32,12 @@ int main(void)
 	SETBIT(DDRC,7);
 	
 	//////////////////////////////////////////////////////////////////////////
-	ReqTemp=60;
-	Mode=2; //HEATING OR COOLING
-	SettingMode=0; //IF 1 Setting Mode is active
+	ReqTemp = 60;				//The initial temperature is 60
+	Mode = 2;					//HEATING OR COOLING
+	SettingMode = 0;			//IF 1 Setting Mode is active
 	//////////////////////////////////////////////////////////////////////////
 	
-	Write_EEPROM(60,1,1); //Write Required temp to EEPROM (initially to 60) 
+	Write_EEPROM(60,1,1);	//Write Required temp to EEPROM (initially to 60) 
 	
 	//////////////////////////////////////////////////////////////////////////
     while (1) 

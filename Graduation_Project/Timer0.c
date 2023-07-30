@@ -47,24 +47,24 @@ ISR(TIMER0_OVF_vect)
 		//Counting 100 ms
 		counter = 0;
 		
-		SumTemp -= MeasuredTemp[ArrCount];
-		MeasuredTemp[ArrCount] = (500.0 * ADC_Read(0)) / 1024.0;
-		SumTemp += MeasuredTemp[ArrCount];
-		ActualTemp = SumTemp / 10;
+		SumTemp -= MeasuredTemp[ArrCount];							//Delete the most early temperature measured
+		MeasuredTemp[ArrCount] = (500.0 * ADC_Read(0)) / 1024.0;	//Measure the new temperature
+		SumTemp += MeasuredTemp[ArrCount];							//Adds the new temperature
+		ActualTemp = SumTemp / 10;									//Gets the average of all measured temperature
 		ArrCount++;
 		
 		//Counting 1 Second
 		
-		if (ArrCount >= 10)
+		if (ArrCount >= 10)											//If the timer counts 1 second
 		{
-			ArrCount = 0;
-			if (Mode==1)//Heating element on
+			ArrCount = 0;											//reset the arrayCount
+			if (Mode==1)											//Heating element on
 			{
 				TOGGLEBIT(PORTC,7);
 				_delay_ms(100);
 				TOGGLEBIT(PORTC,7);
 			}
-			if (SettingMode)//Temp Setting mode
+			if (SettingMode)										//Temp Setting mode
 			{
 				SS_Deinit();
 				_delay_ms(100);

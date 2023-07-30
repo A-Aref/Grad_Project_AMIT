@@ -17,7 +17,7 @@ void SS_Init()
 	DDRC |= 0x3c;
 }
 
-void SS_Deinit()
+void SS_Deinit()							//To allow blinking and shutting down
 {
 	DDRA &= 0x0f;
 	DDRC &= 0xc3;
